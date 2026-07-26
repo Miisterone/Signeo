@@ -1,0 +1,2 @@
+# Convertit les fins de ligne en LF sur tous les OS pour eviter les faux diffs entre Windows et Linux
+* text=auto eol=lf
