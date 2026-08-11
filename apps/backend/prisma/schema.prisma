@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  CHIEF_MANAGER
+  MANAGER
+  CHIEF_AGENT
+  AGENT
+}
+
+model User {
+  id           String  @id @default(uuid())
+  email        String  @unique
+  passwordHash String
+  role         Role    @default(AGENT)
+  name         String
+  seniority    Int?
+  hiredAt      String?
+  isActive     Boolean @default(true)
+
+  managerId   String?
+  manager     User?   @relation("UserHierarchy", fields: [managerId], references: [id], onDelete: SetNull)
+  teamMembers User[]  @relation("UserHierarchy")
+
+  lastLoginAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([managerId])
+}
+
+model Company {
+  id           String  @id @default(uuid())
+  name         String
+  addressLine1 String
+  addressLine2 String?
+  postalCode   String?
+  city         String
+  country      String  @default("FR")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clients      Client[]
+}
+
+model Client {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  phone        String
+  addressLine1 String
+  addressLine2 String?
+  postalCode   String?
+  city         String
+
+  companyId    String?
+  company      Company? @relation(fields: [companyId], references: [id])
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([companyId])
+}
