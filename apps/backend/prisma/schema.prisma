@@ -30,7 +30,6 @@ model User {
   manager     User?   @relation("UserHierarchy", fields: [managerId], references: [id], onDelete: SetNull)
   teamMembers User[]  @relation("UserHierarchy")
 
-  lastLoginAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
