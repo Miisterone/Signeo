@@ -4,6 +4,7 @@
   "description": "Api Signeo",
   "author": "Joris",
   "private": true,
+  "type": "module",
   "license": "UNLICENSED",
   "scripts": {
     "dev": "nest start --watch",
