@@ -3,7 +3,8 @@
   "tasks": {
     "db:generate": {
       "cache": true,
-      "outputs": ["generated/**"]
+      "outputs": ["generated/**"],
+      "env": ["DIRECT_URL"]
     },
     "build": {
       "dependsOn": ["^build", "db:generate"],
