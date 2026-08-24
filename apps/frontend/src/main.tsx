@@ -1,10 +1,30 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { RouterProvider } from '@tanstack/react-router'
+import { AuthProvider, useAuth } from './auth/auth-provider'
+import { router } from './router'
 import './index.css'
-import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
+function AppRouter() {
+  const auth = useAuth()
+
+  if (auth.isInitializing) {
+    return null
+  }
+
+  return <RouterProvider router={router} context={{ auth }} />
+}
+
+const rootElement = document.getElementById('root')
+
+if (!rootElement) {
+  throw new Error('Element racine #root introuvable')
+}
+
+createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <AuthProvider>
+      <AppRouter />
+    </AuthProvider>
   </StrictMode>,
 )
