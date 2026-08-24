@@ -2,7 +2,7 @@ name: Release Prod
 
 on:
   push:
-    branches: [main]
+    branches: [dev]
 
 permissions:
   contents: write

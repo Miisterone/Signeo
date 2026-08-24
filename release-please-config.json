@@ -10,8 +10,6 @@
   "packages": {
     "apps/backend": { "component": "backend" },
     "apps/frontend": { "component": "frontend" },
-    "apps/mobile": { "component": "mobile" },
-    "packages/types": { "component": "types" },
-    "packages/supabase": { "component": "supabase" }
+    "apps/mobile": { "component": "mobile" }
   }
 }
