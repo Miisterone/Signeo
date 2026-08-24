@@ -2,6 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from './user.service';
+import { Role } from '../../generated/prisma/enums';
 
 const mockUser = {
   id: 'user-1',
@@ -12,7 +13,6 @@ const mockUser = {
   hiredAt: null,
   isActive: true,
   managerId: null,
-  lastLoginAt: null,
   createdAt: new Date('2026-01-01'),
   updatedAt: new Date('2026-01-01'),
 };
@@ -50,13 +50,15 @@ describe('UserService', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('create', () => {
-    it('hashes the password and never returns it', async () => {
+    it('create user', async () => {
       prisma.user.create.mockResolvedValue(mockUser);
 
       const result = await service.create({
         email: mockUser.email,
         password: 'supersecret',
         name: mockUser.name,
+        role: mockUser.role as Role,
+        isActive: mockUser.isActive,
       });
 
       expect(result).toEqual(mockUser);
@@ -69,7 +71,7 @@ describe('UserService', () => {
   });
 
   describe('findAll', () => {
-    it('returns every user', async () => {
+    it('find all users', async () => {
       prisma.user.findMany.mockResolvedValue([mockUser]);
 
       await expect(service.findAll()).resolves.toEqual([mockUser]);
@@ -77,13 +79,13 @@ describe('UserService', () => {
   });
 
   describe('findOne', () => {
-    it('returns the user when found', async () => {
+    it('find user', async () => {
       prisma.user.findUnique.mockResolvedValue(mockUser);
 
       await expect(service.findOne(mockUser.id)).resolves.toEqual(mockUser);
     });
 
-    it('throws NotFoundException when missing', async () => {
+    it('user not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
       await expect(service.findOne('missing')).rejects.toThrow(
@@ -93,7 +95,7 @@ describe('UserService', () => {
   });
 
   describe('update', () => {
-    it('updates an existing user', async () => {
+    it('update user', async () => {
       prisma.user.findUnique.mockResolvedValue(mockUser);
       prisma.user.update.mockResolvedValue({
         ...mockUser,
@@ -107,7 +109,7 @@ describe('UserService', () => {
       expect(result.name).toBe('Joris Updated');
     });
 
-    it('throws NotFoundException when the user does not exist', async () => {
+    it('user not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
       await expect(service.update('missing', { name: 'x' })).rejects.toThrow(
@@ -117,8 +119,33 @@ describe('UserService', () => {
     });
   });
 
+  describe('updateManager', () => {
+    it('change managerId', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockUser);
+      prisma.user.update.mockResolvedValue({
+        ...mockUser,
+        managerId: '35754cd1-bbfe-4b1e-a42d-230a6c898ea0',
+      });
+
+      const result = await service.updateManager(mockUser.id, {
+        managerId: '35754cd1-bbfe-4b1e-a42d-230a6c898ea0',
+      });
+
+      expect(result.managerId).toBe('35754cd1-bbfe-4b1e-a42d-230a6c898ea0');
+    });
+
+    it('user not found', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.updateManager('missing', { managerId: 'manager-1' }),
+      ).rejects.toThrow(NotFoundException);
+      expect(prisma.user.update).not.toHaveBeenCalled();
+    });
+  });
+
   describe('remove', () => {
-    it('deletes an existing user', async () => {
+    it('delete user', async () => {
       prisma.user.findUnique.mockResolvedValue(mockUser);
       prisma.user.delete.mockResolvedValue(mockUser);
 
@@ -129,7 +156,7 @@ describe('UserService', () => {
       });
     });
 
-    it('throws NotFoundException when the user does not exist', async () => {
+    it('user not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
       await expect(service.remove('missing')).rejects.toThrow(

@@ -8,6 +8,7 @@ import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { UpdateManagerUserDto } from './dto/updatemanagerUser.dto';
 
 const PASSWORD_SALT_ROUNDS = 10;
 
@@ -20,7 +21,6 @@ const userSelect = {
   hiredAt: true,
   isActive: true,
   managerId: true,
-  lastLoginAt: true,
   createdAt: true,
   updatedAt: true,
 } satisfies Prisma.UserSelect;
@@ -37,6 +37,7 @@ export class UserService {
 
   async create(dto: CreateUserDto) {
     const passwordHash = await bcrypt.hash(dto.password, PASSWORD_SALT_ROUNDS);
+    const date = Date.now();
 
     try {
       return await this.prisma.user.create({
@@ -45,8 +46,8 @@ export class UserService {
           passwordHash,
           name: dto.name,
           role: dto.role,
-          seniority: dto.seniority,
-          hiredAt: dto.hiredAt,
+          seniority: 0,
+          hiredAt: new Date(date).toLocaleDateString('fr-FR'),
           managerId: dto.managerId,
         },
         select: userSelect,
@@ -83,6 +84,15 @@ export class UserService {
       data: dto,
       select: userSelect,
     });
+  }
+
+  async updateManager(id: string, dto: UpdateManagerUserDto){
+    await this.findOne(id);
+    return this.prisma.user.update({
+      where: {id},
+      data: dto,
+      select: userSelect,
+    })
   }
 
   async remove(id: string): Promise<void> {
