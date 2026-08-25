@@ -5,7 +5,8 @@
     { "type": "fix","section": "Bug Fixes" },
     { "type": "refacto","section": "Refactoring" },
     { "type": "docs","section": "Documentation" },
-    { "type": "ci_cd","section": "CI CD" }
+    { "type": "ci_cd","section": "CI CD" },
+    {"type": "chore", "section": "Miscellaneous", "hidden": true}
   ],
   "packages": {
     "apps/backend": { "component": "backend" },
