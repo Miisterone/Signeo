@@ -6,7 +6,7 @@
     { "type": "refacto","section": "Refactoring" },
     { "type": "docs","section": "Documentation" },
     { "type": "ci_cd","section": "CI CD" },
-    {"type": "chore", "section": "Miscellaneous", "hidden": true}
+    {"type": "chore", "hidden": true}
   ],
   "packages": {
     "apps/backend": { "component": "backend" },
