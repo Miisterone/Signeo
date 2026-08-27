@@ -6,9 +6,5 @@ export const Route = createFileRoute('/_authenticated')({
       throw redirect({ to: '/auth/login', search: { redirect: location.href } })
     }
   },
-  component: AuthenticatedLayout,
+  component: Outlet,
 })
-
-function AuthenticatedLayout() {
-  return <Outlet />
-}

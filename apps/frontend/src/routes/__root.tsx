@@ -1,16 +1,7 @@
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { createRootRouteWithContext } from '@tanstack/react-router'
 import type { RouterContext } from '../interfaces/router-context.model'
+import { RootLayout } from '../layouts/-root-layout.tsx'
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
 })
-
-function RootLayout() {
-  return (
-    <>
-      <Outlet />
-      {import.meta.env.DEV ? <TanStackRouterDevtools /> : null}
-    </>
-  )
-}

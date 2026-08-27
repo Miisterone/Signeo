@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "FT Kunst Grotesk";
+  src: url("/fonts/FTKunstGroteskTrial-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FT Kunst Grotesk";
+  src: url("/fonts/FTKunstGroteskTrial-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FT Kunst Grotesk";
+  src: url("/fonts/FTKunstGroteskTrial-Bold.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "FT Kunst Grotesk", sans-serif;
+
+  --color-red: #990f0f;
+  --color-red-dark: #7a0c0c;
+  --color-red-darker: #660a0a;
+  --color-red-pale: #f7ecec;
+
+  --color-page: #f2f0ef;
+  --color-card: #ffffff;
+  --color-line: #e3e0de;
+  --color-line-dark: #d3cfcc;
+
+  --color-heading: #0a0a0a;
+  --color-body: #3d4e5f;
+  --color-subtle: #6b7a88;
+
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-line);
+  }
+
+  body {
+    background-color: var(--color-page);
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-heading);
+    font-weight: 500;
+  }
+
+  a {
+    color: var(--color-red);
+  }
+
+  a:hover {
+    color: var(--color-red-dark);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 2px;
+  }
+}
