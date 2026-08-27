@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { getRouteApi, Link, useRouter } from "@tanstack/react-router";
-import { useAuth } from "../../auth/auth-provider";
+import { useAuth } from "../../auth/auth-context";
 
 const routeApi = getRouteApi("/auth/login");
 

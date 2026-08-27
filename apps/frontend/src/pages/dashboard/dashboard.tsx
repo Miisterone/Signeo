@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useRouter } from '@tanstack/react-router'
-import { useAuth } from '../../auth/auth-provider'
+import { useAuth } from '../../auth/auth-context'
 
 export function DashboardPage() {
   const { user, signOut } = useAuth()
