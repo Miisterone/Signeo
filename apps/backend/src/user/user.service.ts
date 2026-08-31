@@ -35,7 +35,6 @@ export class UserService {
 
   async create(dto: CreateUserDto) {
     const passwordHash = await bcrypt.hash(dto.password, PASSWORD_SALT_ROUNDS);
-    const date = Date.now();
 
     try {
       return await this.prisma.user.create({
@@ -44,8 +43,8 @@ export class UserService {
           passwordHash,
           name: dto.name,
           role: dto.role,
-          seniority: 0,
-          hiredAt: new Date(date).toLocaleDateString('fr-FR'),
+          seniority: dto.seniority ?? 0,
+          hiredAt: dto.hiredAt ? new Date(dto.hiredAt) : new Date(),
           managerId: dto.managerId,
         },
         select: userSelect,

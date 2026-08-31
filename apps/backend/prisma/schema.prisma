@@ -23,7 +23,7 @@ model User {
   role         Role    @default(AGENT)
   name         String
   seniority    Int?
-  hiredAt      String?
+  hiredAt      DateTime?
   isActive     Boolean @default(true)
 
   managerId   String?

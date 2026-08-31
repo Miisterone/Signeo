@@ -1,4 +1,14 @@
-import { IsBoolean, IsEmail,IsEnum,IsInt,IsOptional,IsString,IsUUID,MinLength} from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsEmail,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MinLength,
+} from 'class-validator';
 import { Role } from '../../../generated/prisma/enums';
 
 export class CreateUserDto {
@@ -20,7 +30,7 @@ export class CreateUserDto {
   seniority?: number = 0;
 
   @IsOptional()
-  @IsString()
+  @IsDateString()
   hiredAt?: string;
 
   @IsBoolean()
