@@ -1,10 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { getSupabaseFrontendClient } from "../../../lib/supabase/client";
-import { AuthLayout } from "../../components/auth-layout";
-import { PasswordField } from "../../components/password-field";
-import { Button } from "../../components/button";
-import { FormError } from "../../components/form-error";
+import { AuthLayout } from "../../layouts/auth-layout";
+import { PasswordField } from "../../components/form/password-field";
+import { Button } from "../../components/ui/button";
+import { FormError } from "../../components/ui/form-error";
 
 export function UpdatePasswordPage() {
   const supabase = getSupabaseFrontendClient();

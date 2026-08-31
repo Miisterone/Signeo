@@ -2,11 +2,11 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { getRouteApi, Link, useRouter } from "@tanstack/react-router";
 import { useAuth } from "../../auth/auth-context";
-import { AuthLayout } from "../../components/auth-layout";
-import { TextField } from "../../components/text-field";
-import { PasswordField } from "../../components/password-field";
-import { Button } from "../../components/button";
-import { FormError } from "../../components/form-error";
+import { AuthLayout } from "../../layouts/auth-layout";
+import { TextField } from "../../components/form/text-field";
+import { PasswordField } from "../../components/form/password-field";
+import { Button } from "../../components/ui/button";
+import { FormError } from "../../components/ui/form-error";
 
 const routeApi = getRouteApi("/auth/login");
 

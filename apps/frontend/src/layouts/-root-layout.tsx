@@ -5,7 +5,7 @@ export function RootLayout() {
   return (
     <>
       <Outlet />
-      {import.meta.env.DEV ? <TanStackRouterDevtools /> : null}
+      {import.meta.env.VITE_TANSTACK_DEVTOOLS === 'true' ? <TanStackRouterDevtools /> : null}
     </>
   )
 }
