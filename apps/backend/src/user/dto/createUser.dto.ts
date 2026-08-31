@@ -34,7 +34,7 @@ export class CreateUserDto {
   hiredAt?: string;
 
   @IsBoolean()
-  isActive!: boolean;
+  isActive?: boolean = true;
 
   @IsOptional()
   @IsUUID()
