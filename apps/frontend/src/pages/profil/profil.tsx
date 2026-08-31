@@ -26,16 +26,19 @@ export function ProfilPage() {
   });
 
   const { data: manager } = useQuery({
-      queryKey: ["users", user?.managerId],
-      enabled: !!token && !!user?.managerId,
-      queryFn: async (): Promise<User> => {
-        const res = await fetch(`http://localhost:3000/users/${user!.managerId}`, {
+    queryKey: ["users", user?.managerId],
+    enabled: !!token && !!user?.managerId,
+    queryFn: async (): Promise<User> => {
+      const res = await fetch(
+        `http://localhost:3000/users/${user!.managerId}`,
+        {
           headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      },
-    });
+        },
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    },
+  });
 
   if (isLoading) return <div className="p-6">Chargement…</div>;
   if (error)
@@ -54,7 +57,7 @@ export function ProfilPage() {
       <br></br>
       <p>Ancienneté: {user.seniority}</p>
       <br></br>
-      <p>Embaucher à : {user.hiredAt}</p>
+      <p>Embaucher à : {new Date(user.hiredAt).toLocaleDateString("fr-FR")}</p>
       <br></br>
       <p>Manager: {manager?.name}</p>
     </div>
