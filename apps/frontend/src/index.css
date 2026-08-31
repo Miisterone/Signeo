@@ -24,20 +24,29 @@
 
   --color-red: #990f0f;
   --color-red-dark: #7a0c0c;
-  --color-red-darker: #660a0a;
-  --color-red-pale: #f7ecec;
+  --color-red-darker: #5c0909;
+  --color-red-pale: #fbf0f0;
 
-  --color-page: #f2f0ef;
+  --color-page: #f5f4f2;
   --color-card: #ffffff;
-  --color-line: #e3e0de;
-  --color-line-dark: #d3cfcc;
+  --color-line: #e6e3df;
+  --color-line-dark: #d6d1cb;
+  --color-line-strong: #78716c;
 
-  --color-heading: #0a0a0a;
-  --color-body: #3d4e5f;
-  --color-subtle: #6b7a88;
+  --color-heading: #1c1917;
+  --color-body: #44403c;
+  --color-subtle: #66615c;
+
+  --color-danger: #b42318;
+  --color-danger-pale: #fef3f2;
+  --color-success: #067647;
+  --color-success-pale: #edfcf2;
 
   --radius-md: 6px;
   --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
 }
 
 @layer base {
@@ -66,10 +75,17 @@
 
   a {
     color: var(--color-red);
+    text-underline-offset: 2px;
   }
 
   a:hover {
     color: var(--color-red-dark);
+  }
+
+  input,
+  select,
+  textarea {
+    border-color: var(--color-line-strong);
   }
 
   :focus-visible {
