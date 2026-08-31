@@ -1,12 +1,8 @@
 import { useState } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
 import {
-  Calendar,
-  FileText,
   House,
   LogOut,
-  Users,
-  UsersRound,
   UserRound,
 } from "lucide-react";
 import { useAuth } from "../../auth/auth-context";
@@ -64,7 +60,7 @@ export function SideBar() {
                 <span className="flex-1 text-left">Dashboard</span>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 to="/interventions"
                 className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-sm"
@@ -76,8 +72,8 @@ export function SideBar() {
                 <FileText size={18} strokeWidth={1.5} aria-hidden="true" />
                 <span className="flex-1 text-left">Interventions</span>
               </Link>
-            </li>
-            <li>
+            </li> */}
+            {/* <li>
               <Link
                 to="/calendrier"
                 className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-sm"
@@ -89,7 +85,7 @@ export function SideBar() {
                 <Calendar size={18} strokeWidth={1.5} aria-hidden="true" />
                 <span className="flex-1 text-left">Calendrier</span>
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
 
@@ -98,7 +94,7 @@ export function SideBar() {
             Organisation
           </p>
           <ul className="space-y-0.5">
-            <li>
+            {/* <li>
               <Link
                 to="/clients"
                 className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-sm"
@@ -123,7 +119,7 @@ export function SideBar() {
                 <UsersRound size={18} strokeWidth={1.5} aria-hidden="true" />
                 <span className="flex-1 text-left">Mon équipe</span>
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
       </nav>
