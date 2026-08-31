@@ -26,9 +26,7 @@ const userSelect = {
 } satisfies Prisma.UserSelect;
 
 function isUniqueConstraintError(error: unknown): boolean {
-  return (
-    error instanceof Prisma.PrismaClientKnownRequestError
-  );
+  return error instanceof Prisma.PrismaClientKnownRequestError;
 }
 
 @Injectable()
@@ -54,9 +52,7 @@ export class UserService {
       });
     } catch (error) {
       if (isUniqueConstraintError(error)) {
-        throw new ConflictException(
-          `User already exist`,
-        );
+        throw new ConflictException(`User already exist`);
       }
       throw error;
     }
@@ -86,13 +82,13 @@ export class UserService {
     });
   }
 
-  async updateManager(id: string, dto: UpdateManagerUserDto){
+  async updateManager(id: string, dto: UpdateManagerUserDto) {
     await this.findOne(id);
     return this.prisma.user.update({
-      where: {id},
+      where: { id },
       data: dto,
       select: userSelect,
-    })
+    });
   }
 
   async remove(id: string): Promise<void> {
