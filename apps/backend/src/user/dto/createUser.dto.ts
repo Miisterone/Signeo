@@ -3,7 +3,6 @@ import {
   IsDateString,
   IsEmail,
   IsEnum,
-  IsInt,
   IsOptional,
   IsString,
   IsUUID,
@@ -26,8 +25,8 @@ export class CreateUserDto {
   name!: string;
 
   @IsOptional()
-  @IsInt()
-  seniority?: number = 0;
+  @IsString()
+  phone?: string;
 
   @IsOptional()
   @IsDateString()

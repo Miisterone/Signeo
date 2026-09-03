@@ -22,6 +22,7 @@ model User {
   passwordHash String
   role         Role    @default(AGENT)
   name         String
+  phone        String?
   seniority    Int?
   hiredAt      DateTime?
   isActive     Boolean @default(true)

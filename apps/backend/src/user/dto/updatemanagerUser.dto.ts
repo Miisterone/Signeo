@@ -1,6 +1,6 @@
-import { IsString } from "class-validator";
+import { IsString } from 'class-validator';
 
-export class UpdateManagerUserDto{
-   @IsString()
-   managerId?: string; 
+export class UpdateManagerUserDto {
+  @IsString()
+  managerId?: string;
 }
