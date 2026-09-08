@@ -1,6 +1,6 @@
 import { createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
-import type { AuthContextValue } from './interfaces/auth.model'
+import type { AuthContextValue } from './interfaces/auth'
 
 export const router = createRouter({
   routeTree,

@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react"
-import type { AuthContextValue } from "../interfaces/auth.model"
+import type { AuthContextValue } from "../interfaces/auth"
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 

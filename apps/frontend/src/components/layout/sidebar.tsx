@@ -23,10 +23,7 @@ export function SideBar() {
     try {
       await signOut();
       await router.invalidate();
-      await router.navigate({
-        to: "/auth/login",
-        search: { redirect: "/dashboard" },
-      });
+      await router.navigate({ to: "/auth/login" });
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Déconnexion impossible",
@@ -38,12 +35,12 @@ export function SideBar() {
   return (
     <aside className="flex h-dvh w-64 shrink-0 flex-col border-r border-line bg-card">
       <div className="flex h-16 shrink-0 items-center gap-2.5 border-b border-line px-5">
-        <span className="text-2xl font-medium text-red">Signeo</span>
+        <span className="text-2xl font-semibold text-red">Signeo</span>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-5">
         <div className="mb-6 last:mb-0">
-          <p className="mb-2 px-2 text-xs font-medium uppercase tracking-wide text-subtle">
+          <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-subtle">
             Pilotage
           </p>
           <ul className="space-y-0.5">
@@ -51,7 +48,7 @@ export function SideBar() {
               <Link
                 to="/dashboard"
                 className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-sm"
-                activeProps={{ className: "bg-red-pale font-medium text-red-dark" }}
+                activeProps={{ className: "bg-red-pale font-semibold text-red-dark" }}
                 inactiveProps={{
                   className: "text-body hover:bg-page hover:text-heading",
                 }}
@@ -60,66 +57,6 @@ export function SideBar() {
                 <span className="flex-1 text-left">Dashboard</span>
               </Link>
             </li>
-            {/* <li>
-              <Link
-                to="/interventions"
-                className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-sm"
-                activeProps={{ className: "bg-red-pale font-medium text-red-dark" }}
-                inactiveProps={{
-                  className: "text-body hover:bg-page hover:text-heading",
-                }}
-              >
-                <FileText size={18} strokeWidth={1.5} aria-hidden="true" />
-                <span className="flex-1 text-left">Interventions</span>
-              </Link>
-            </li> */}
-            {/* <li>
-              <Link
-                to="/calendrier"
-                className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-sm"
-                activeProps={{ className: "bg-red-pale font-medium text-red-dark" }}
-                inactiveProps={{
-                  className: "text-body hover:bg-page hover:text-heading",
-                }}
-              >
-                <Calendar size={18} strokeWidth={1.5} aria-hidden="true" />
-                <span className="flex-1 text-left">Calendrier</span>
-              </Link>
-            </li> */}
-          </ul>
-        </div>
-
-        <div className="mb-6 last:mb-0">
-          <p className="mb-2 px-2 text-xs font-medium uppercase tracking-wide text-subtle">
-            Organisation
-          </p>
-          <ul className="space-y-0.5">
-            {/* <li>
-              <Link
-                to="/clients"
-                className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-sm"
-                activeProps={{ className: "bg-red-pale font-medium text-red-dark" }}
-                inactiveProps={{
-                  className: "text-body hover:bg-page hover:text-heading",
-                }}
-              >
-                <Users size={18} strokeWidth={1.5} aria-hidden="true" />
-                <span className="flex-1 text-left">Clients</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/equipe"
-                className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-sm"
-                activeProps={{ className: "bg-red-pale font-medium text-red-dark" }}
-                inactiveProps={{
-                  className: "text-body hover:bg-page hover:text-heading",
-                }}
-              >
-                <UsersRound size={18} strokeWidth={1.5} aria-hidden="true" />
-                <span className="flex-1 text-left">Mon équipe</span>
-              </Link>
-            </li> */}
           </ul>
         </div>
       </nav>
@@ -134,7 +71,7 @@ export function SideBar() {
         <Link
           to="/profil"
           className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-sm"
-          activeProps={{ className: "bg-red-pale font-medium text-red-dark" }}
+          activeProps={{ className: "bg-red-pale font-semibold text-red-dark" }}
           inactiveProps={{
             className: "text-body hover:bg-page hover:text-heading",
           }}

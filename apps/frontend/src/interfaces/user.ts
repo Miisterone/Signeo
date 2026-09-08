@@ -2,6 +2,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  phone: string | null;
   role: string;
   seniority: number | null;
   hiredAt: string | null;

@@ -10,7 +10,7 @@ export function TextField({ id, label, ...props }: TextFieldProps) {
     <div>
       <label
         htmlFor={id}
-        className="block text-sm leading-6 font-medium text-heading"
+        className="block text-sm leading-6 font-semibold text-heading"
       >
         {label}
       </label>
