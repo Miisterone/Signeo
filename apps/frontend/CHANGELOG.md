@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/Miisterone/Signeo/compare/frontend-v0.2.0...frontend-v0.2.1) (2026-09-12)
+
+
+### Features
+
+* **frontend:** profil page ([#17](https://github.com/Miisterone/Signeo/issues/17)) ([79aa5bf](https://github.com/Miisterone/Signeo/commit/79aa5bf9b9928bb0f03715ab6545dc559bdfddbd))
+
 ## [0.2.0](https://github.com/Miisterone/Signeo/compare/frontend-v0.1.0...frontend-v0.2.0) (2026-08-31)
 
 
