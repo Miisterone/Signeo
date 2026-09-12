@@ -52,7 +52,6 @@ export function ResetPasswordPage() {
             <Link
               className="font-semibold hover:underline"
               to="/auth/login"
-              search={{ redirect: "/dashboard" }}
             >
               Retour à la connexion
             </Link>
@@ -84,7 +83,6 @@ export function ResetPasswordPage() {
             <Link
               className="font-semibold hover:underline"
               to="/auth/login"
-              search={{ redirect: "/dashboard" }}
             >
               Retour à la connexion
             </Link>

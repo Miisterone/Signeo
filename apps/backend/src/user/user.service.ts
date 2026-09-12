@@ -16,8 +16,8 @@ const userSelect = {
   id: true,
   email: true,
   name: true,
+  phone: true,
   role: true,
-  seniority: true,
   hiredAt: true,
   isActive: true,
   managerId: true,
@@ -26,9 +26,27 @@ const userSelect = {
 } satisfies Prisma.UserSelect;
 
 function isUniqueConstraintError(error: unknown): boolean {
-  return (
-    error instanceof Prisma.PrismaClientKnownRequestError
-  );
+  return error instanceof Prisma.PrismaClientKnownRequestError;
+}
+
+function computeSeniority(hiredAt: Date | null): number | null {
+  if (!hiredAt) {
+    return null;
+  }
+
+  const now = new Date();
+  let months =
+    (now.getFullYear() - hiredAt.getFullYear()) * 12 +
+    (now.getMonth() - hiredAt.getMonth());
+  if (now.getDate() < hiredAt.getDate()) {
+    months -= 1;
+  }
+
+  return Math.max(months, 0);
+}
+
+function withSeniority<T extends { hiredAt: Date | null }>(user: T) {
+  return { ...user, seniority: computeSeniority(user.hiredAt) };
 }
 
 @Injectable()
@@ -37,33 +55,32 @@ export class UserService {
 
   async create(dto: CreateUserDto) {
     const passwordHash = await bcrypt.hash(dto.password, PASSWORD_SALT_ROUNDS);
-    const date = Date.now();
 
     try {
-      return await this.prisma.user.create({
+      const user = await this.prisma.user.create({
         data: {
           email: dto.email,
           passwordHash,
           name: dto.name,
+          phone: dto.phone,
           role: dto.role,
-          seniority: 0,
-          hiredAt: new Date(date).toLocaleDateString('fr-FR'),
+          hiredAt: dto.hiredAt ? new Date(dto.hiredAt) : new Date(),
           managerId: dto.managerId,
         },
         select: userSelect,
       });
+      return withSeniority(user);
     } catch (error) {
       if (isUniqueConstraintError(error)) {
-        throw new ConflictException(
-          `User already exist`,
-        );
+        throw new ConflictException(`User already exist`);
       }
       throw error;
     }
   }
 
-  findAll() {
-    return this.prisma.user.findMany({ select: userSelect });
+  async findAll() {
+    const users = await this.prisma.user.findMany({ select: userSelect });
+    return users.map(withSeniority);
   }
 
   async findOne(id: string) {
@@ -74,25 +91,27 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User ${id} not found`);
     }
-    return user;
+    return withSeniority(user);
   }
 
   async update(id: string, dto: UpdateUserDto) {
     await this.findOne(id);
-    return this.prisma.user.update({
+    const user = await this.prisma.user.update({
       where: { id },
       data: dto,
       select: userSelect,
     });
+    return withSeniority(user);
   }
 
-  async updateManager(id: string, dto: UpdateManagerUserDto){
+  async updateManager(id: string, dto: UpdateManagerUserDto) {
     await this.findOne(id);
-    return this.prisma.user.update({
-      where: {id},
+    const user = await this.prisma.user.update({
+      where: { id },
       data: dto,
       select: userSelect,
-    })
+    });
+    return withSeniority(user);
   }
 
   async remove(id: string): Promise<void> {

@@ -1,9 +1,7 @@
-import { SideBar } from "../../components/layout/sidebar";
-
 export function DashboardPage() {
   return (
-    <main className="flex bg-page">
-      <SideBar />
-    </main>
+    <div className="p-6">
+      <h1 className="text-xl font-semibold text-heading">Dashboard</h1>
+    </div>
   );
 }

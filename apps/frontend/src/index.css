@@ -1,26 +1,7 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: "FT Kunst Grotesk";
-  src: url("/fonts/FTKunstGroteskTrial-Regular.otf") format("opentype");
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: "FT Kunst Grotesk";
-  src: url("/fonts/FTKunstGroteskTrial-Medium.otf") format("opentype");
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
-  font-family: "FT Kunst Grotesk";
-  src: url("/fonts/FTKunstGroteskTrial-Bold.otf") format("opentype");
-  font-weight: 600;
-  font-display: swap;
-}
-
 @theme {
-  --font-sans: "FT Kunst Grotesk", sans-serif;
+  --font-sans: "Atkinson Hyperlegible", sans-serif;
 
   --color-red: #990f0f;
   --color-red-dark: #7a0c0c;
@@ -70,7 +51,7 @@
   h5,
   h6 {
     color: var(--color-heading);
-    font-weight: 500;
+    font-weight: 700;
   }
 
   a {

@@ -1,4 +1,4 @@
-import type { AuthContextValue } from './auth.model'
+import type { AuthContextValue } from './auth'
 
 export interface RouterContext {
   auth: AuthContextValue

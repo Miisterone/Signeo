@@ -16,6 +16,7 @@ import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthUpdatePasswordRouteImport } from './routes/auth/update-password'
+import { Route as AuthenticatedProfilUpdatePasswordRouteImport } from './routes/_authenticated/profil_.update-password'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -51,6 +52,12 @@ const AuthUpdatePasswordRoute = AuthUpdatePasswordRouteImport.update({
   path: '/auth/update-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedProfilUpdatePasswordRoute =
+  AuthenticatedProfilUpdatePasswordRouteImport.update({
+    id: '/profil_/update-password',
+    path: '/profil/update-password',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/update-password': typeof AuthUpdatePasswordRoute
+  '/profil/update-password': typeof AuthenticatedProfilUpdatePasswordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/update-password': typeof AuthUpdatePasswordRoute
+  '/profil/update-password': typeof AuthenticatedProfilUpdatePasswordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,6 +86,7 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/update-password': typeof AuthUpdatePasswordRoute
+  '/_authenticated/profil_/update-password': typeof AuthenticatedProfilUpdatePasswordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/update-password'
+    | '/profil/update-password'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/update-password'
+    | '/profil/update-password'
   id:
     | '__root__'
     | '/'
@@ -104,6 +116,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/reset-password'
     | '/auth/update-password'
+    | '/_authenticated/profil_/update-password'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -165,17 +178,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthUpdatePasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/profil_/update-password': {
+      id: '/_authenticated/profil_/update-password'
+      path: '/profil/update-password'
+      fullPath: '/profil/update-password'
+      preLoaderRoute: typeof AuthenticatedProfilUpdatePasswordRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
+  AuthenticatedProfilUpdatePasswordRoute: typeof AuthenticatedProfilUpdatePasswordRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
+  AuthenticatedProfilUpdatePasswordRoute:
+    AuthenticatedProfilUpdatePasswordRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

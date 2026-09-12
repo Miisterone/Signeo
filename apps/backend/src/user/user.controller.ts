@@ -1,9 +1,21 @@
-import { Body,Controller,Delete,Get,HttpCode,HttpStatus,Param,Patch,Post} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { UserService } from './user.service';
 import { Role } from '../../generated/prisma/enums';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { AccountAccessGuard } from '../auth/guards/account-access.guard';
 import { UpdateManagerUserDto } from './dto/updatemanagerUser.dto';
 
 @Controller('users')
@@ -17,6 +29,7 @@ export class UserController {
   }
 
   @Get()
+  @Roles(Role.ADMIN)
   findAll() {
     return this.userService.findAll();
   }
@@ -27,10 +40,12 @@ export class UserController {
   }
 
   @Patch(':id')
+  @UseGuards(AccountAccessGuard)
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.userService.update(id, dto);
   }
 
+  @Roles(Role.ADMIN)
   @Patch(':id/manager')
   updateManager(@Param('id') id: string, @Body() dto: UpdateManagerUserDto) {
     return this.userService.updateManager(id, dto);
