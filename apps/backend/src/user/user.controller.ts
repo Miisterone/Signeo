@@ -10,14 +10,17 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/createUser.dto';
-import { UpdateUserDto } from './dto/updateUser.dto';
 import { UserService } from './user.service';
 import { Role } from '../../generated/prisma/enums';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { AccountAccessGuard } from '../auth/guards/account-access.guard';
-import { UpdateManagerUserDto } from './dto/updatemanagerUser.dto';
+import { CreateUserDto } from '../dto/users/createUser.dto';
+import { UpdateUserDto } from '../dto/users/updateUser.dto';
+import { UpdateManagerUserDto } from '../dto/users/updatemanagerUser.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -35,6 +38,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @UseGuards(AccountAccessGuard)
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }

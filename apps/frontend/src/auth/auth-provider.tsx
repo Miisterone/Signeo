@@ -4,6 +4,7 @@ import type { Session } from "@supabase/supabase-js";
 import { getSupabaseFrontendClient } from "../../lib/supabase/client";
 import type { AuthContextValue, SignInCredentials } from "../interfaces/auth";
 import { AuthContext } from "./auth-context";
+import { apiFetch } from "../api/http-client";
 
 const supabase = getSupabaseFrontendClient();
 
@@ -61,13 +62,27 @@ export function AuthProvider({ children }: PropsWithChildren) {
       isInitializing,
       mustReauth,
       signIn: async ({ email, password }: SignInCredentials) => {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+        const response = await apiFetch<{ session: Session | null }>(
+          "/auth/login",
+          {
+            method: "POST",
+            body: JSON.stringify({ email, password }),
+          },
+        );
+
+        if (!response.session) {
+          throw new Error();
+        }
+
+        const { data, error } = await supabase.auth.setSession({
+          access_token: response.session.access_token,
+          refresh_token: response.session.refresh_token,
         });
+
         if (error) {
           throw error;
         }
+
         setSession(data.session ?? undefined);
         clearMustReauth();
       },

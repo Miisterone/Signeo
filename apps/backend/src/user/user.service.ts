@@ -6,9 +6,9 @@ import {
 import * as bcrypt from 'bcryptjs';
 import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './dto/createUser.dto';
-import { UpdateUserDto } from './dto/updateUser.dto';
-import { UpdateManagerUserDto } from './dto/updatemanagerUser.dto';
+import { CreateUserDto } from '../dto/users/createUser.dto';
+import { UpdateUserDto } from '../dto/users/updateUser.dto';
+import { UpdateManagerUserDto } from '../dto/users/updatemanagerUser.dto';
 
 const PASSWORD_SALT_ROUNDS = 10;
 
