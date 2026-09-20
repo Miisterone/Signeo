@@ -16,6 +16,16 @@ enum Role {
   AGENT
 }
 
+model LoginAttempt {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  attempt       Int       @default(0)
+  ip            String?
+  last_attempt  DateTime  @default(now())
+  last_login    DateTime?
+  blocked_until DateTime?
+}
+
 model User {
   id           String  @id @default(uuid())
   email        String  @unique
