@@ -27,10 +27,8 @@ export function LoginPage() {
       await signIn({ email, password });
       await router.invalidate();
       await router.navigate({ to: "/dashboard" });
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "Connexion impossible",
-      );
+    } catch {
+      setErrorMessage("E-mail ou mot de passe incorrect.");
     } finally {
       setIsSubmitting(false);
     }
@@ -51,7 +49,11 @@ export function LoginPage() {
         </p>
       )}
 
-      <form onSubmit={handleSubmit} aria-label="Connexion" className="space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        aria-label="Connexion"
+        className="space-y-4"
+      >
         <TextField
           id="email"
           label="E-mail"
