@@ -17,4 +17,6 @@ EXPOSE 5173
 
 STOPSIGNAL SIGTERM
 
-CMD ["pnpm", "dev", "--host", "0.0.0.0"]
+RUN pnpm --dir apps/frontend run build
+
+CMD ["pnpm", "--dir", "apps/frontend", "run", "preview", "--", "--host", "0.0.0.0"]
