@@ -12,6 +12,11 @@ services:
 
     stop_signal: SIGTERM
     init: true # Kill children process
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
 
   backend:
     build:
@@ -24,6 +29,11 @@ services:
 
     stop_signal: SIGTERM
     init: true # Kill children process
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
   nginx:
     build:
       context: ./apps/nginx
@@ -34,3 +44,8 @@ services:
         condition: service_healthy
       frontend:
         condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
