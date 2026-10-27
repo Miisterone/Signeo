@@ -22,5 +22,5 @@ EXPOSE 3000
 
 STOPSIGNAL SIGTERM
 
-RUN pnpm --dir apps/backend run build
-CMD ["pnpm", "--dir", "apps/backend", "run", "start:prod"]
+RUN pnpm run build
+CMD ["pnpm", "run", "prod"]
