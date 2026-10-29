@@ -22,6 +22,7 @@ services:
     build:
       context: .
       dockerfile: apps/backend/Dockerfile
+    env_file: apps/backend/.env
     healthcheck:
       test: nc -z 127.0.0.1 3000
       interval: 5s

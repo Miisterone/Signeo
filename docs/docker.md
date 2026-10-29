@@ -13,7 +13,7 @@
 
 # 0. Démarage
 
-Voici le processus de démarrage des conteneurs. On démarre le backend en premier car il exécute les processus les plus longs. Le frontend attend que le backend soit `healthy`, puis Nginx attend les deux avant d'exposer l'application.
+Voici le processus de démarrage des conteneurs. On démarre le backend en premier car il exécute les processus les plus longs. Le frontend attend que le backend soit `healthy`, puis Nginx attend que le backend soit `healthy` et que le frontend soit démarré (`service_started`) avant d'exposer l'application.
 
 ![App Screenshot](./images/docker-start.png)
 
@@ -43,15 +43,14 @@ Pour le backend, on exécute en plus `pnpm exec prisma generate` afin de génér
 
 Pour Nginx, on supprime la conf par défaut puis on copie notre `nginx.conf` qui installe le reverse proxy.
 
-Les fichiers `.dockerignore` excluent `node_modules/` afin de ne pas copier les dépendances de l'host dans l'image.
+Le `.dockerignore` à la racine du repo (le `context` du build) exclut `node_modules/`, `dist/` et `.git` afin de ne pas copier les fichiers de l'host dans l'image. Il exclut aussi `apps/backend/.env` : les secrets du backend sont injectés au démarrage via `env_file` dans `compose.yml` au lieu d'être figés dans l'image. Le `.env` du frontend reste copié car Vite intègre les variables `VITE_*` au moment du build.
 
 # 3. Explication des arguments
 
 ### Dockerfiles
 
-`pnpm install --frozen-lockfile` installe exactement les versions du `pnpm-lock.yaml` et échoue si le lockfile n'est pas à jour. Ca permet de rendre les builds reproductibles. `pnpm --dir apps/<service> run <script>` exécute le script du `package.json` du service ciblé.
-
-Je configure Vite pour écouter les autres conteneurs `vite preview -- --host 0.0.0.0`
+`pnpm install --frozen-lockfile` installe exactement les versions du `pnpm-lock.yaml` et échoue si le lockfile n'est pas à jour. Ca permet de rendre les builds reproductibles.
+Le frontend est buildé (`pnpm run build`) pendant la construction de l'image, puis servi par `vite preview` sur `0.0.0.0:5173`. Le port est forcé avec `--port 5173` car Vite utilise 4173 par défaut, alors que Nginx et le healthcheck visent 5173.
 
 `EXPOSE <port>` = le port écouté par le conteneur
 `STOPSIGNAL SIGTERM` définit le signal envoyé lors d'un `docker stop`
@@ -68,7 +67,7 @@ Je configure Vite pour écouter les autres conteneurs `vite preview -- --host 0.
   - `interval: 5s` : un test toutes les 5 secondes.
   - `start_period: 30s` : pendant le démarrage du backend (Prisma, connexion DB), les échecs ne comptent pas.
 - `init: true` : kill tous les processes enfant.
-- `ports: 8080:8080` : seul Nginx est accessible depuis l'hôte.
+- `ports: 8080` : seul Nginx est accessible depuis l'hôte.
 
 # 4. Explications sur les entrypoints
 
@@ -81,7 +80,7 @@ En termes d'entrypoint, on recrée la même structure que dans le mono-repo. Cha
 5. Copie le code source du service.
 6. Build le service, puis le lance via `CMD`.
 
-Le backend démarre avec `pnpm run start:prod`, qui lance le build NestJS (`dist/`). Le frontend démarre avec `pnpm run preview --host 0.0.0.0`, qui sert le build Vite. Nginx garde l'entrypoint par défaut de son image
+Le backend est compilé pendant le build de l'image (`pnpm run build`), puis démarre avec `pnpm run prod` (`node dist/src/main`). Le frontend démarre avec `pnpm run preview --host 0.0.0.0 --port 5173`, qui sert le build déjà généré.
 
 # 5. Limitation des ressources
 
@@ -117,6 +116,8 @@ docker compose logs backend
 Docker Compose crée un réseau commun : chaque conteneur est joignable par son nom de service (`backend`, `frontend`, `nginx`).
 
 Seul Nginx est exposé sur l'hôte (`8080`) et sert de point d'entrée unique. Il redirige `/api/*` vers le backend (le préfixe `/api` est retiré : `/api/users` → `/users`) et le reste vers le frontend. Il autorise aussi les uploads jusqu'à 20 Mo (`client_max_body_size 20m`) pour sécuriser le S3.
+
+Le Swagger du backend est servi sur `/swagger` (donc `/api/swagger` via Nginx), uniquement si `SWAGGER=DEV`.
 
 Le backend et le frontend ne sont accessibles que via Nginx. Les appels vers Supabase sortent directement des conteneurs vers Internet.
 
