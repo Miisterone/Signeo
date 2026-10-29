@@ -64,7 +64,9 @@ describe('UserService', () => {
       expect(result).toEqual(mockUser);
       expect(result).not.toHaveProperty('passwordHash');
 
-      const createArgs = prisma.user.create.mock.calls[0][0];
+      const [createArgs] = prisma.user.create.mock.calls[0] as [
+        { data: { passwordHash?: string } },
+      ];
       expect(createArgs.data.passwordHash).toBeDefined();
       expect(createArgs.data.passwordHash).not.toBe('supersecret');
     });

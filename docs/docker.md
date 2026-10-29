@@ -9,13 +9,12 @@
 6. [Signaux SIGTERM](#6-signaux-sigterm)
 7. [Communication](#7-communication)
 8. [Lancer le projet](#8-lancer-le-projet)
+9. [CI : lint et tests](#9-ci--lint-et-tests)
 <br/><br/>
 
 # 0. Démarage
 
-Voici le processus de démarrage des conteneurs. On démarre le backend en premier car il exécute les processus les plus longs. Le frontend attend que le backend soit `healthy`, puis Nginx attend que le backend soit `healthy` et que le frontend soit démarré (`service_started`) avant d'exposer l'application.
-
-![App Screenshot](./images/docker-start.png)
+Voici le processus de démarrage des conteneurs. On démarre le backend en premier car il exécute les processus les plus longs. Le frontend attend que le backend soit `healthy`, puis Nginx attend que le frontend soit démarré (`service_started`) avant d'exposer l'application. Nginx n'a pas besoin d'attendre le backend lui-même : le frontend l'attend déjà.
 
 ### Architecture Stack
 
@@ -41,7 +40,7 @@ Pour les services frontend et backend, on crée un dossier de travail `/app` qui
 
 Pour le backend, on exécute en plus `pnpm exec prisma generate` afin de générer le client Prisma dans l'image sinon l'api ne peut marcher.
 
-Pour Nginx, on supprime la conf par défaut puis on copie notre `nginx.conf` qui installe le reverse proxy.
+Pour Nginx, on copie notre `nginx.conf` à la place de la conf par défaut (`default.conf`), ce qui installe le reverse proxy.
 
 Le `.dockerignore` à la racine du repo (le `context` du build) exclut `node_modules/`, `dist/` et `.git` afin de ne pas copier les fichiers de l'host dans l'image. Il exclut aussi `apps/backend/.env` : les secrets du backend sont injectés au démarrage via `env_file` dans `compose.yml` au lieu d'être figés dans l'image. Le `.env` du frontend reste copié car Vite intègre les variables `VITE_*` au moment du build.
 
@@ -97,7 +96,7 @@ Lors d'un `docker stop` ou `docker compose down`, Docker envoie un **SIGTERM** a
 
 Mise en place :
 
-- **`STOPSIGNAL SIGTERM`** (Dockerfile) et **`stop_signal: SIGTERM`** (compose) : fixent le signal d'arrêt.
+- **`STOPSIGNAL SIGTERM`** (Dockerfile) : fixe le signal d'arrêt de l'image.
 - **`init: true`** : kill tous les processes enfant (node)
 - **`app.enableShutdownHooks()`** (backend, `main.ts`) : NestJS réagit au SIGTERM, par exemple pour fermer la connexion Prisma.
 - **Nginx** : gère SIGTERM nativement.
@@ -130,4 +129,28 @@ docker compose up --build -d   # build et démarre tous les services
 docker compose ps              # état et healthchecks
 docker compose logs -f backend # logs d'un service
 docker compose down            # arrêt
+```
+
+# 9. CI : lint et tests
+
+J'ai ajouté deux conteneurs pour vérifier le code : `lint` et `test`. Ils ne se lancent pas avec l'application, seulement quand on le demande (grâce à `profiles: ["ci"]`).
+
+Le conteneur `lint` vérifie que le code est bien écrit (erreurs, mauvaises pratiques). Il lance `pnpm -r run lint`.
+
+Le conteneur `test` lance les tests automatiques du backend avec `pnpm run test`.
+
+Les deux images utilisent `node:24-alpine` : une version légère de Node 24, la version demandée par le backend. `corepack enable` active PNPM.
+
+`COPY . .` copie tout le projet dans l'image. Le fichier `.dockerignore` évite de copier les dossiers inutiles ou lourds (`node_modules`, `dist`, `.git`, l'app mobile) et le fichier secret `.env` du backend.
+
+La ligne `RUN` installe les paquets, puis génère le client Prisma. Car le lint comme les tests en ont besoin.
+
+Le conteneur `test` attend que `lint` se termine sans erreur avant de démarrer (`service_completed_successfully`). Si le lint échoue, les tests ne se lancent pas.
+
+Chaque conteneur a droit à 1 CPU et 1G de mémoire maximum. Le lint demande un peu plus de mémoire que l'application.
+
+Pas de signal SIGTERM, ces conteneurs s'arrêtent tout seuls quand ils ont fini.
+
+```bash
+docker compose --profile ci run --rm test   # lance le lint, puis les tests
 ```

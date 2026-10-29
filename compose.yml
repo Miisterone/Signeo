@@ -9,15 +9,12 @@ services:
     healthcheck:
       test: wget --spider http://127.0.0.1:5173/
       interval: 5s
-
-    stop_signal: SIGTERM
     init: true # Kill children process
     deploy:
       resources:
         limits:
           cpus: "1"
           memory: 512M
-
   backend:
     build:
       context: .
@@ -27,8 +24,6 @@ services:
       test: nc -z 127.0.0.1 3000
       interval: 5s
       start_period: 30s
-
-    stop_signal: SIGTERM
     init: true # Kill children process
     deploy:
       resources:
@@ -41,8 +36,6 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      backend:
-        condition: service_healthy
       frontend:
         condition: service_started
     deploy:
@@ -50,3 +43,28 @@ services:
         limits:
           cpus: "0.5"
           memory: 128M
+
+  lint:
+    build:
+      context: .
+      dockerfile: apps/lint/Dockerfile
+    profiles: ["ci"]
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+
+  test:
+    build:
+      context: .
+      dockerfile: apps/test/Dockerfile
+    profiles: ["ci"]
+    depends_on:
+      lint:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
