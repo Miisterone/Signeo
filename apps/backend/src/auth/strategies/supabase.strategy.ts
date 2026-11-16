@@ -51,7 +51,7 @@ export class SupabaseStrategy extends PassportStrategy(Strategy) {
     }
 
     // Email changes are confirmed with Supabase Auth
-    const email = payload.email?.toLowerCase();
+    const email = payload.email;
     if (email && email !== user.email) {
       await this.prisma.user
         .update({ where: { id: user.id }, data: { email } })
