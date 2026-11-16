@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { User } from "../interfaces/user";
-import { getUser, updateUser } from "../api/users";
+import { getUser, updateUser, type UserPatch } from "../api/users";
 
 export const userKeys = {
   detail: (id: string | undefined) => ["users", id] as const,
@@ -21,7 +20,7 @@ export function useUpdateUser(id: string | undefined) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (patch: Partial<User>) =>
+    mutationFn: (patch: UserPatch) =>
       id
         ? updateUser(id, patch)
         : Promise.reject(new Error("Identifiant utilisateur manquant")),

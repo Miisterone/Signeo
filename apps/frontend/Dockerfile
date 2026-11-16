@@ -17,6 +17,4 @@ EXPOSE 5173
 
 STOPSIGNAL SIGTERM
 
-RUN pnpm run build
-
-CMD ["pnpm", "run", "preview", "--host", "0.0.0.0", "--port", "5173"]
+CMD ["pnpm", "run", "dev", "--port", "5173"]

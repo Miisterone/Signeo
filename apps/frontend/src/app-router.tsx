@@ -1,13 +1,26 @@
+import { useEffect } from 'react'
 import { RouterProvider } from '@tanstack/react-router'
 import { useAuth } from './auth/auth-context'
+import { authStore } from './auth/auth-store'
 import { router } from './router'
 
-export function AppRouter() {
-  const auth = useAuth()
+const routerContext = {
+  get auth() {
+    return authStore.getSnapshot()
+  },
+}
 
-  if (auth.isInitializing) {
+export function AppRouter() {
+  const { isInitializing, session, mustReauth } = useAuth()
+
+  // Re-run route guards when auth changes
+  useEffect(() => {
+    if (!isInitializing) void router.invalidate()
+  }, [isInitializing, session, mustReauth])
+
+  if (isInitializing) {
     return null
   }
 
-  return <RouterProvider router={router} context={{ auth }} />
+  return <RouterProvider router={router} context={routerContext} />
 }

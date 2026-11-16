@@ -1,9 +1,11 @@
 import { useRouter } from "@tanstack/react-router";
+import { useAuth } from "../../auth/auth-context";
 import { AuthLayout } from "../../layouts/auth-layout";
 import { PasswordUpdateForm } from "../../components/form/password-update-form";
 
 export function UpdatePasswordPage() {
   const router = useRouter();
+  const { signOut } = useAuth();
 
   return (
     <AuthLayout
@@ -14,7 +16,10 @@ export function UpdatePasswordPage() {
         idPrefix="reset"
         submitLabel="Mettre à jour le mot de passe"
         pendingLabel="Mise à jour…"
-        onSuccess={() => router.navigate({ to: "/auth/login" })}
+        onSuccess={async () => {
+          await signOut().catch(() => undefined);
+          await router.navigate({ to: "/auth/login" });
+        }}
       />
     </AuthLayout>
   );

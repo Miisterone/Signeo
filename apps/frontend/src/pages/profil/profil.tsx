@@ -3,7 +3,7 @@ import type { FormEvent, ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { getSupabaseFrontendClient } from "../../../lib/supabase/client";
 import { useAuth } from "../../auth/auth-context";
-import type { User } from "../../interfaces/user";
+import type { UserPatch } from "../../api/users";
 import { useUser, useUpdateUser } from "../../hooks/useUser";
 import { Modal } from "../../components/ui/modal";
 import { IdCard } from "lucide-react";
@@ -126,7 +126,7 @@ export function ProfilPage() {
     setEmailNotice(undefined);
     setEmailError(undefined);
 
-    const patch: Partial<User> = {};
+    const patch: UserPatch = {};
     if (form.name !== (currentUser.name ?? "")) patch.name = form.name;
     if (form.phone !== (currentUser.phone ?? "")) patch.phone = form.phone;
 
@@ -138,13 +138,16 @@ export function ProfilPage() {
         setEmailError(authError.message);
         return;
       }
-      patch.email = form.email;
+
       setEmailNotice(
         "Un e-mail de confirmation vous a été envoyé. La nouvelle adresse sera active après validation.",
       );
     }
 
-    if (Object.keys(patch).length === 0) return;
+    if (Object.keys(patch).length === 0) {
+      setForm((previous) => ({ ...previous, email: currentUser.email }));
+      return;
+    }
 
     updateUser.mutate(patch, {
       onSuccess: (updated) =>

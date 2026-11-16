@@ -49,7 +49,9 @@ Le `.dockerignore` à la racine du repo (le `context` du build) exclut `node_mod
 ### Dockerfiles
 
 `pnpm install --frozen-lockfile` installe exactement les versions du `pnpm-lock.yaml` et échoue si le lockfile n'est pas à jour. Ca permet de rendre les builds reproductibles.
-Le frontend est buildé (`pnpm run build`) pendant la construction de l'image, puis servi par `vite preview` sur `0.0.0.0:5173`. Le port est forcé avec `--port 5173` car Vite utilise 4173 par défaut, alors que Nginx et le healthcheck visent 5173.
+Les services tournent en mode dev : 
+- le frontend lance le serveur Vite (`pnpm run dev`) sur `0.0.0.0:5173` avec le Hot Reload
+- le backend lance `nest start --watch`, les `node_modules` et le client Prisma généré restent ceux de l'image grâce à des volumes anonymes
 
 `EXPOSE <port>` = le port écouté par le conteneur
 `STOPSIGNAL SIGTERM` définit le signal envoyé lors d'un `docker stop`
@@ -77,9 +79,9 @@ En termes d'entrypoint, on recrée la même structure que dans le mono-repo. Cha
 3. Copie uniquement le `package.json` du service cible (et le schéma Prisma pour le backend).
 4. Installe les dépendances (`pnpm install --frozen-lockfile`).
 5. Copie le code source du service.
-6. Build le service, puis le lance via `CMD`.
+6. Lance le service en mode dev via `CMD` (`pnpm run dev`).
 
-Le backend est compilé pendant le build de l'image (`pnpm run build`), puis démarre avec `pnpm run prod` (`node dist/src/main`). Le frontend démarre avec `pnpm run preview --host 0.0.0.0 --port 5173`, qui sert le build déjà généré.
+Le backend démarre avec `pnpm run dev` (`nest start --watch`), le frontend avec `pnpm run dev --port 5173` (`vite --host 0.0.0.0`).
 
 # 5. Limitation des ressources
 

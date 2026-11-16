@@ -4,7 +4,9 @@ import { apiFetch } from "./http-client";
 export const getUser = (id: string): Promise<User> =>
   apiFetch<User>(`/users/${id}`);
 
-export const updateUser = (id: string, patch: Partial<User>): Promise<User> =>
+export type UserPatch = Partial<Pick<User, "name" | "phone">>;
+
+export const updateUser = (id: string, patch: UserPatch): Promise<User> =>
   apiFetch<User>(`/users/${id}`, {
     method: "PATCH",
     body: JSON.stringify(patch),

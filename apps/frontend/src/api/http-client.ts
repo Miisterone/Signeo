@@ -3,6 +3,16 @@ import { getSupabaseFrontendClient } from "../../lib/supabase/client";
 const API_URL = import.meta.env.VITE_API_URL;
 const supabase = getSupabaseFrontendClient();
 
+export class ApiError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 function buildHeaders(options: RequestInit, token?: string): Headers {
   const headers = new Headers(options.headers);
 
@@ -41,7 +51,11 @@ export async function apiFetch<T>(
   });
 
   if (!response.ok) {
-    throw new Error(await readErrorMessage(response));
+    throw new ApiError(await readErrorMessage(response), response.status);
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
   }
 
   return response.json() as Promise<T>;

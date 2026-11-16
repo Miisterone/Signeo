@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { env } from 'prisma/config';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
@@ -25,7 +24,7 @@ async function bootstrap() {
     SwaggerModule.setup('swagger', app, documentFactory);
   }
   app.enableShutdownHooks();
-  await app.listen(env('PORT'));
+  await app.listen(process.env.PORT ?? 3000);
 }
 
-bootstrap();
+void bootstrap();

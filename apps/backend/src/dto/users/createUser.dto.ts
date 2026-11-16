@@ -8,9 +8,11 @@ import {
   IsUUID,
   MinLength,
 } from 'class-validator';
+import { NormalizeEmail } from '../transforms';
 import { Role } from '../../../generated/prisma/enums';
 
 export class CreateUserDto {
+  @NormalizeEmail()
   @IsEmail()
   email!: string;
 
@@ -32,6 +34,7 @@ export class CreateUserDto {
   @IsDateString()
   hiredAt?: string;
 
+  @IsOptional()
   @IsBoolean()
   isActive?: boolean = true;
 
