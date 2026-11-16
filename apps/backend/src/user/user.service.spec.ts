@@ -4,6 +4,13 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from './user.service';
 import { Role } from '../../generated/prisma/enums';
 import { SUPABASE_ADMIN } from '../supabase/supabase-admin.provider';
+import { Prisma } from '../../generated/prisma/client';
+
+const notFoundError = () =>
+  new Prisma.PrismaClientKnownRequestError('Record not found', {
+    code: 'P2025',
+    clientVersion: 'test',
+  });
 
 const mockUser = {
   id: 'user-1',
@@ -82,13 +89,16 @@ describe('UserService', () => {
       });
 
       expect(result).toEqual(mockUser);
-      expect(result).not.toHaveProperty('passwordHash');
 
+      // The password goes to Supabase Auth only, never into the User table.
+      expect(supabase.auth.admin.createUser).toHaveBeenCalledWith(
+        expect.objectContaining({ password: 'supersecret' }),
+      );
       const [createArgs] = prisma.user.create.mock.calls[0] as [
-        { data: { passwordHash?: string } },
+        { data: Record<string, unknown> },
       ];
-      expect(createArgs.data.passwordHash).toBeDefined();
-      expect(createArgs.data.passwordHash).not.toBe('supersecret');
+      expect(createArgs.data.id).toBe('user-1');
+      expect(createArgs.data).not.toHaveProperty('password');
     });
   });
 
@@ -132,12 +142,11 @@ describe('UserService', () => {
     });
 
     it('user not found', async () => {
-      prisma.user.findUnique.mockResolvedValue(null);
+      prisma.user.update.mockRejectedValue(notFoundError());
 
       await expect(service.update('missing', { name: 'x' })).rejects.toThrow(
         NotFoundException,
       );
-      expect(prisma.user.update).not.toHaveBeenCalled();
     });
   });
 
@@ -166,12 +175,11 @@ describe('UserService', () => {
     });
 
     it('user not found', async () => {
-      prisma.user.findUnique.mockResolvedValue(null);
+      prisma.user.update.mockRejectedValue(notFoundError());
 
       await expect(
-        service.updateManager('missing', { managerId: 'manager-1' }),
+        service.updateManager('missing', { managerId: null }),
       ).rejects.toThrow(NotFoundException);
-      expect(prisma.user.update).not.toHaveBeenCalled();
     });
   });
 
@@ -188,12 +196,12 @@ describe('UserService', () => {
     });
 
     it('user not found', async () => {
-      prisma.user.findUnique.mockResolvedValue(null);
+      prisma.user.delete.mockRejectedValue(notFoundError());
 
       await expect(service.remove('missing')).rejects.toThrow(
         NotFoundException,
       );
-      expect(prisma.user.delete).not.toHaveBeenCalled();
+      expect(supabase.auth.admin.deleteUser).not.toHaveBeenCalled();
     });
   });
 });

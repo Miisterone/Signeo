@@ -33,6 +33,9 @@ function hasPrismaCode(error: unknown, code: string): boolean {
 }
 
 function mapPrismaError(error: unknown): never {
+  if (hasPrismaCode(error, 'P2025')) {
+    throw new NotFoundException('User not found');
+  }
   if (hasPrismaCode(error, 'P2002')) {
     throw new ConflictException('Email already in use');
   }
@@ -70,7 +73,6 @@ export class UserService {
   ) {}
 
   async create(dto: CreateUserDto) {
-    
     const { data, error } = await this.supabase.auth.admin.createUser({
       email: dto.email,
       password: dto.password,
@@ -121,7 +123,6 @@ export class UserService {
   }
 
   async update(id: string, dto: UpdateUserDto) {
-    await this.findOne(id);
     try {
       const user = await this.prisma.user.update({
         where: { id },
@@ -135,7 +136,6 @@ export class UserService {
   }
 
   async updateManager(id: string, dto: UpdateManagerUserDto) {
-    await this.findOne(id);
     if (dto.managerId !== null) {
       await this.assertNoHierarchyCycle(id, dto.managerId);
     }
@@ -152,8 +152,11 @@ export class UserService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.findOne(id);
-    await this.prisma.user.delete({ where: { id } });
+    try {
+      await this.prisma.user.delete({ where: { id } });
+    } catch (error) {
+      mapPrismaError(error);
+    }
     const { error } = await this.supabase.auth.admin.deleteUser(id);
     if (error && error.status !== 404) {
       throw error;
