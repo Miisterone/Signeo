@@ -1,6 +1,7 @@
-import { IsString } from 'class-validator';
+import { IsUUID, ValidateIf } from 'class-validator';
 
 export class UpdateManagerUserDto {
-  @IsString()
-  managerId?: string;
+  @ValidateIf((_, value) => value !== null)
+  @IsUUID()
+  managerId!: string | null;
 }

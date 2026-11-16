@@ -1,14 +1,7 @@
-import { createContext, useContext } from "react"
+import { useSyncExternalStore } from "react"
 import type { AuthContextValue } from "../interfaces/auth"
-
-export const AuthContext = createContext<AuthContextValue | undefined>(undefined)
+import { authStore } from "./auth-store"
 
 export function useAuth(): AuthContextValue {
-  const context = useContext(AuthContext)
-
-  if (!context) {
-    throw new Error('Error useAuth()')
-  }
-
-  return context
+  return useSyncExternalStore(authStore.subscribe, authStore.getSnapshot)
 }

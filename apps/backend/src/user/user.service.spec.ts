@@ -1,8 +1,9 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from './user.service';
 import { Role } from '../../generated/prisma/enums';
+import { SUPABASE_ADMIN } from '../supabase/supabase-admin.provider';
 
 const mockUser = {
   id: 'user-1',
@@ -29,7 +30,22 @@ describe('UserService', () => {
     };
   };
 
+  let supabase: {
+    auth: { admin: { createUser: jest.Mock; deleteUser: jest.Mock } };
+  };
+
   beforeEach(async () => {
+    supabase = {
+      auth: {
+        admin: {
+          createUser: jest.fn().mockResolvedValue({
+            data: { user: { id: 'user-1' } },
+            error: null,
+          }),
+          deleteUser: jest.fn().mockResolvedValue({ error: null }),
+        },
+      },
+    };
     prisma = {
       user: {
         create: jest.fn(),
@@ -41,7 +57,11 @@ describe('UserService', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UserService, { provide: PrismaService, useValue: prisma }],
+      providers: [
+        UserService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: SUPABASE_ADMIN, useValue: supabase },
+      ],
     }).compile();
 
     service = module.get<UserService>(UserService);
@@ -134,6 +154,15 @@ describe('UserService', () => {
       });
 
       expect(result.managerId).toBe('35754cd1-bbfe-4b1e-a42d-230a6c898ea0');
+    });
+
+    it('rejects the user as their own manager', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockUser);
+
+      await expect(
+        service.updateManager(mockUser.id, { managerId: mockUser.id }),
+      ).rejects.toThrow(BadRequestException);
+      expect(prisma.user.update).not.toHaveBeenCalled();
     });
 
     it('user not found', async () => {

@@ -29,7 +29,7 @@ model LoginAttempt {
 model User {
   id           String  @id @default(uuid())
   email        String  @unique
-  passwordHash String
+  passwordHash String?
   role         Role    @default(AGENT)
   name         String
   phone        String?

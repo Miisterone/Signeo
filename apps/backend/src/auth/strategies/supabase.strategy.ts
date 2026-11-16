@@ -27,7 +27,7 @@ export class SupabaseStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: { sub?: string }) {
+  async validate(payload: { sub?: string; email?: string }) {
     if (!payload.sub) {
       throw new UnauthorizedException();
     }
@@ -38,6 +38,7 @@ export class SupabaseStrategy extends PassportStrategy(Strategy) {
         id: true,
         role: true,
         isActive: true,
+        email: true,
       },
     });
 
@@ -47,6 +48,14 @@ export class SupabaseStrategy extends PassportStrategy(Strategy) {
 
     if (!user.isActive) {
       throw new ForbiddenException('Compte bloqué ou désactivé');
+    }
+
+    // Email changes are confirmed with Supabase Auth
+    const email = payload.email?.toLowerCase();
+    if (email && email !== user.email) {
+      await this.prisma.user
+        .update({ where: { id: user.id }, data: { email } })
+        .catch(() => undefined);
     }
 
     return {

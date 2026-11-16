@@ -1,7 +1,8 @@
 import {
   HttpException,
+  HttpStatus,
+  InternalServerErrorException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
@@ -38,7 +39,10 @@ export class AuthService {
       attemptCount?.blocked_until &&
       attemptCount.blocked_until > new Date()
     ) {
-      throw new HttpException('Incorrect email or password', 418);
+      throw new HttpException(
+        'Too many login attempts, please try again in 15 minutes',
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
     }
 
     const { data, error } = await this.supabase.auth.signInWithPassword({
@@ -47,14 +51,12 @@ export class AuthService {
     });
 
     if (error) {
-      const nextAttempt = (attemptCount?.attempt ?? 0) + 1;
+      if (error.status === 500) {
+        throw new InternalServerErrorException('Internal server error');
+      }
 
-      console.log({
-        email: dto.email,
-        currentAttempt: attemptCount?.attempt,
-        nextAttempt,
-        supabaseError: error.message,
-      });
+      const blockExpired = attemptCount?.blocked_until != null;
+      const nextAttempt = blockExpired ? 1 : (attemptCount?.attempt ?? 0) + 1;
 
       await this.prisma.loginAttempt.upsert({
         where: { email: dto.email },
@@ -65,16 +67,14 @@ export class AuthService {
         },
         update: {
           ip,
-          attempt: { increment: 1 },
+          attempt: blockExpired ? 1 : { increment: 1 },
           last_attempt: new Date(),
           blocked_until:
-            nextAttempt >= 5
-              ? new Date(Date.now() + 15 * 60 * 1000)
-              : undefined,
+            nextAttempt >= 5 ? new Date(Date.now() + 15 * 60 * 1000) : null,
         },
       });
 
-      throw new UnauthorizedException('Incorrect email or password');
+      throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
     }
 
     await this.prisma.loginAttempt.upsert({

@@ -7,6 +7,7 @@ import { TextField } from "../../components/form/text-field";
 import { PasswordField } from "../../components/form/password-field";
 import { Button } from "../../components/ui/button";
 import { FormError } from "../../components/ui/form-error";
+import { ApiError } from "../../api/http-client";
 
 export function LoginPage() {
   const { signIn, mustReauth } = useAuth();
@@ -25,10 +26,15 @@ export function LoginPage() {
 
     try {
       await signIn({ email, password });
-      await router.invalidate();
       await router.navigate({ to: "/dashboard" });
-    } catch {
-      setErrorMessage("E-mail ou mot de passe incorrect.");
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 429) {
+        setErrorMessage(
+          "Trop de tentatives de connexion. Réessayez dans 15 minutes.",
+        );
+      } else {
+        setErrorMessage("E-mail ou mot de passe incorrect.");
+      }
     } finally {
       setIsSubmitting(false);
     }

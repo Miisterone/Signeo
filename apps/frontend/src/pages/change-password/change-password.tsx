@@ -1,12 +1,10 @@
 import { Link, useRouter } from "@tanstack/react-router";
-import { getSupabaseFrontendClient } from "../../../lib/supabase/client";
 import { useAuth } from "../../auth/auth-context";
 import { PasswordUpdateForm } from "../../components/form/password-update-form";
 
 export function ChangePasswordPage() {
   const router = useRouter();
-  const { session, requireReauth } = useAuth();
-  const supabase = getSupabaseFrontendClient();
+  const { session, signOut, requireReauth } = useAuth();
 
   return (
     <div className="max-w-2xl space-y-6 p-6">
@@ -30,8 +28,7 @@ export function ChangePasswordPage() {
           submitLabel="Enregistrer le nouveau mot de passe"
           pendingLabel="Enregistrement…"
           onSuccess={async () => {
-            await supabase.auth.refreshSession().catch(() => undefined);
-            await supabase.auth.signOut().catch(() => undefined);
+            await signOut().catch(() => undefined);
             requireReauth();
             await router.navigate({ to: "/auth/login" });
           }}

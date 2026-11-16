@@ -22,7 +22,6 @@ export function SideBar() {
 
     try {
       await signOut();
-      await router.invalidate();
       await router.navigate({ to: "/auth/login" });
     } catch (error) {
       setErrorMessage(
