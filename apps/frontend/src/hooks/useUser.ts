@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  skipToken,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { getUser, updateUser, type UserPatch } from "../api/users";
 
 export const userKeys = {
@@ -8,11 +13,7 @@ export const userKeys = {
 export function useUser(id: string | undefined) {
   return useQuery({
     queryKey: userKeys.detail(id),
-    enabled: !!id,
-    queryFn: () =>
-      id
-        ? getUser(id)
-        : Promise.reject(new Error("Identifiant utilisateur manquant")),
+    queryFn: id ? () => getUser(id) : skipToken,
   });
 }
 
