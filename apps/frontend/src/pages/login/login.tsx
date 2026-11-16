@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useRouter, useSearch } from "@tanstack/react-router";
 import { useAuth } from "../../auth/auth-context";
 import { AuthLayout } from "../../layouts/auth-layout";
 import { TextField } from "../../components/form/text-field";
@@ -10,7 +10,8 @@ import { FormError } from "../../components/ui/form-error";
 import { ApiError } from "../../api/http-client";
 
 export function LoginPage() {
-  const { signIn, mustReauth } = useAuth();
+  const { signIn } = useAuth();
+  const { reason } = useSearch({ from: "/auth/login" });
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,7 +50,7 @@ export function LoginPage() {
         </>
       }
     >
-      {mustReauth && (
+      {reason === "password-changed" && (
         <p className="mb-4 rounded-md border border-line bg-card px-3 py-2 text-sm text-body">
           Votre mot de passe a été modifié. Reconnectez-vous.
         </p>
