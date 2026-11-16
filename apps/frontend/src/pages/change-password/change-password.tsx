@@ -4,7 +4,7 @@ import { PasswordUpdateForm } from "../../components/form/password-update-form";
 
 export function ChangePasswordPage() {
   const router = useRouter();
-  const { session, signOut, requireReauth } = useAuth();
+  const { signOut } = useAuth();
 
   return (
     <div className="max-w-2xl space-y-6 p-6">
@@ -24,13 +24,14 @@ export function ChangePasswordPage() {
         <PasswordUpdateForm
           idPrefix="change-password"
           requireCurrentPassword
-          userEmail={session?.user.email}
           submitLabel="Enregistrer le nouveau mot de passe"
           pendingLabel="Enregistrement…"
           onSuccess={async () => {
             await signOut().catch(() => undefined);
-            requireReauth();
-            await router.navigate({ to: "/auth/login" });
+            await router.navigate({
+              to: "/auth/login",
+              search: { reason: "password-changed" },
+            });
           }}
         />
       </div>

@@ -5,29 +5,9 @@ import { apiFetch } from "../api/http-client";
 
 const supabase = getSupabaseFrontendClient();
 
-const MUST_REAUTH_KEY = "signeo:must-reauth";
-
-function readMustReauth(): boolean {
-  try {
-    return localStorage.getItem(MUST_REAUTH_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
-function writeMustReauth(value: boolean) {
-  try {
-    if (value) localStorage.setItem(MUST_REAUTH_KEY, "1");
-    else localStorage.removeItem(MUST_REAUTH_KEY);
-  } catch {
-    // storage unavailable
-  }
-}
-
 interface AuthState {
   session?: Session;
   isInitializing: boolean;
-  mustReauth: boolean;
 }
 
 const listeners = new Set<() => void>();
@@ -45,10 +25,8 @@ function buildSnapshot(state: AuthState): AuthContextValue {
     session: state.session,
     isAuthenticated: state.session !== undefined,
     isInitializing: state.isInitializing,
-    mustReauth: state.mustReauth,
     signIn,
     signOut,
-    requireReauth,
   };
 }
 
@@ -71,8 +49,7 @@ async function signIn({ email, password }: SignInCredentials) {
     throw error;
   }
 
-  writeMustReauth(false);
-  setState({ session: data.session ?? undefined, mustReauth: false });
+  setState({ session: data.session ?? undefined });
 }
 
 async function signOut() {
@@ -80,29 +57,14 @@ async function signOut() {
   if (error) {
     throw error;
   }
-  writeMustReauth(false);
-  setState({ session: undefined, mustReauth: false });
+  setState({ session: undefined });
 }
 
-function requireReauth() {
-  writeMustReauth(true);
-  setState({ mustReauth: true });
-}
+snapshot = buildSnapshot({ session: undefined, isInitializing: true });
 
-snapshot = buildSnapshot({
-  session: undefined,
-  isInitializing: true,
-  mustReauth: readMustReauth(),
-});
-
-supabase.auth
-  .getSession()
-  .then(({ data }) => setState({ session: data.session ?? undefined }))
-  .catch(() => setState({ session: undefined }))
-  .finally(() => setState({ isInitializing: false }));
-
+// Fires INITIAL_SESSION on startup, then on every sign-in/out/refresh.
 supabase.auth.onAuthStateChange((_event, nextSession) => {
-  setState({ session: nextSession ?? undefined });
+  setState({ session: nextSession ?? undefined, isInitializing: false });
 });
 
 export const authStore = {

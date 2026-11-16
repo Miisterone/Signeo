@@ -11,12 +11,12 @@ const routerContext = {
 }
 
 export function AppRouter() {
-  const { isInitializing, session, mustReauth } = useAuth()
+  const { isInitializing, session } = useAuth()
 
   // Re-run route guards when auth changes
   useEffect(() => {
     if (!isInitializing) void router.invalidate()
-  }, [isInitializing, session, mustReauth])
+  }, [isInitializing, session])
 
   if (isInitializing) {
     return null

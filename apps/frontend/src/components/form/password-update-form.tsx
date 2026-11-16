@@ -5,6 +5,7 @@ import { PasswordField } from "./password-field";
 import { PasswordStrength } from "./password-strength";
 import { Button } from "../ui/button";
 import { FormError } from "../ui/form-error";
+import { ApiError, apiFetch } from "../../api/http-client";
 
 interface PasswordUpdateFormProps {
   idPrefix: string;
@@ -12,7 +13,20 @@ interface PasswordUpdateFormProps {
   pendingLabel: string;
   onSuccess?: () => void;
   requireCurrentPassword?: boolean;
-  userEmail?: string;
+}
+
+function toErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    if (error.status === 429) {
+      return "Trop de tentatives. Réessayez dans 15 minutes.";
+    }
+    if (error.status === 400 && error.message.includes("Current password")) {
+      return "Mot de passe actuel incorrect.";
+    }
+  }
+  return error instanceof Error
+    ? error.message
+    : "La mise à jour du mot de passe a échoué";
 }
 
 export function PasswordUpdateForm({
@@ -21,7 +35,6 @@ export function PasswordUpdateForm({
   pendingLabel,
   onSuccess,
   requireCurrentPassword = false,
-  userEmail,
 }: PasswordUpdateFormProps) {
   const supabase = getSupabaseFrontendClient();
 
@@ -42,45 +55,31 @@ export function PasswordUpdateForm({
       return;
     }
 
-    const trimmedEmail = userEmail?.trim() ?? "";
-    if (requireCurrentPassword && trimmedEmail === "") {
-      setErrorMessage(
-        "Impossible de vérifier votre identité. Reconnectez-vous puis réessayez.",
-      );
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       if (requireCurrentPassword) {
-        const { error: reauthError } = await supabase.auth.signInWithPassword({
-          email: trimmedEmail,
-          password: currentPassword,
+        // Checked by the backend, which applies the login lockout.
+        await apiFetch<void>("/auth/change-password", {
+          method: "POST",
+          body: JSON.stringify({ currentPassword, newPassword: password }),
         });
-        if (reauthError) {
-          throw new Error("Mot de passe actuel incorrect.");
+      } else {
+        // Recovery flow: the e-mail link already proved the identity.
+        const { error } = await supabase.auth.updateUser({ password });
+        if (error) {
+          throw error;
         }
       }
 
-      const { error } = await supabase.auth.updateUser({ password });
-      if (error) {
-        throw error;
-      }
-
-      // Kick the other devices out after a password change.
-      await supabase.auth.signOut({ scope: "others" }).catch(() => undefined);
-
+      // The pages' onSuccess signs out globally, which also ends the
+      // sessions on other devices.
       setCurrentPassword("");
       setPassword("");
       setConfirmPassword("");
-      setIsSubmitting(false);
       onSuccess?.();
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "La mise à jour du mot de passe a échoué",
-      );
+      setErrorMessage(toErrorMessage(error));
+    } finally {
       setIsSubmitting(false);
     }
   };
