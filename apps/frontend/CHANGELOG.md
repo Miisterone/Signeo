@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/Miisterone/Signeo/compare/frontend-v0.2.3...frontend-v0.3.0) (2026-11-17)
+
+
+### Features
+
+* limite les tentatives de connexion + store auth ([ee0d6e9](https://github.com/Miisterone/Signeo/commit/ee0d6e9813cb8a8332dfd553934aac76db1054d1))
+
+
+### Refactoring
+
+* change password ([abfb3cf](https://github.com/Miisterone/Signeo/commit/abfb3cf8d97539084573fdaf3df4f34418429821))
+* **frontend:** split profile page ([4f95931](https://github.com/Miisterone/Signeo/commit/4f95931db6959e3e4ae41a3b21b56ef376307498))
+
 ## [0.2.3](https://github.com/Miisterone/Signeo/compare/frontend-v0.2.2...frontend-v0.2.3) (2026-10-29)
 
 

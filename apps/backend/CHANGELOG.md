@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.2.0](https://github.com/Miisterone/Signeo/compare/backend-v0.1.3...backend-v0.2.0) (2026-11-17)
+
+
+### Features
+
+* add change-password endpoint ([dc4c5a1](https://github.com/Miisterone/Signeo/commit/dc4c5a1ff84ebfa007f1d84f650a36ed72a51ebf))
+* limite les tentatives de connexion + store auth ([ee0d6e9](https://github.com/Miisterone/Signeo/commit/ee0d6e9813cb8a8332dfd553934aac76db1054d1))
+
+
+### Bug Fixes
+
+* supabase error handling improvements ([250cb58](https://github.com/Miisterone/Signeo/commit/250cb5806d4a47279d7f6d98799f7bb6c0435d5a))
+
+
+### Refactoring
+
+* **auth:** inject supabase clients + role from jwt strategy ([4d986c5](https://github.com/Miisterone/Signeo/commit/4d986c593a18e42ba655596283f38c0585c6540e))
+
+
+### CI CD
+
+* **backend:** switch jest to ESM and rename eslint config ([afd35d6](https://github.com/Miisterone/Signeo/commit/afd35d6687c48585544e43cfc5d6d3a320f39ed0))
+
 ## [0.1.3](https://github.com/Miisterone/Signeo/compare/backend-v0.1.2...backend-v0.1.3) (2026-10-29)
 
 
