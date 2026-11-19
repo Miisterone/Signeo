@@ -1,12 +1,14 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "changelog-sections": [
-    { "type": "feat","section": "Features" },
-    { "type": "fix","section": "Bug Fixes" },
-    { "type": "refacto","section": "Refactoring" },
-    { "type": "docs","section": "Documentation" },
-    { "type": "ci_cd","section": "CI CD" },
-    {"type": "chore", "hidden": true}
+    { "type": "feat", "section": "Features" },
+    { "type": "fix", "section": "Bug Fixes" },
+    { "type": "refacto", "section": "Refactoring" },
+    { "type": "docs", "section": "Documentation" },
+    { "type": "ci_cd", "section": "CI CD" },
+    { "type": "test", "section": "Tests" },
+    { "type": "misc", "section": "Miscellaneous" },
+    { "type": "chore", "hidden": true }
   ],
   "packages": {
     "apps/backend": { "component": "backend" },
