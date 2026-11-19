@@ -3,7 +3,7 @@ import type { ChangeEvent, FormEvent, ReactNode } from "react";
 import { getSupabaseFrontendClient } from "../../../lib/supabase/client";
 import type { UserPatch } from "../../api/users";
 import type { User } from "../../interfaces/user";
-import { useUpdateUser } from "../../hooks/useUser";
+import { useUpdateUser } from "../../hooks/use-user";
 import { Card } from "../../components/ui/card";
 
 const inputClass =

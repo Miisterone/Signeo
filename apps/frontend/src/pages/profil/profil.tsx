@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { IdCard } from "lucide-react";
-import { useAuth } from "../../auth/auth-context";
-import { useUser } from "../../hooks/useUser";
+import { useAuth } from "../../auth/use-auth";
+import { useUser } from "../../hooks/use-user";
 import { Card } from "../../components/ui/card";
 import { Modal } from "../../components/ui/modal";
 import { IdentityForm } from "./identity-form";

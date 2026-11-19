@@ -6,7 +6,7 @@ import { TextField } from "../../components/form/text-field";
 import { Button } from "../../components/ui/button";
 import { FormError } from "../../components/ui/form-error";
 
-export function ResetPasswordPage() {
+export function ForgotPasswordPage() {
   const supabase = getSupabaseFrontendClient();
 
   const [email, setEmail] = useState("");

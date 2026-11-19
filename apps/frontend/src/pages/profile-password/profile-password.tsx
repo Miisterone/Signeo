@@ -1,8 +1,8 @@
 import { Link, useRouter } from "@tanstack/react-router";
-import { useAuth } from "../../auth/auth-context";
+import { useAuth } from "../../auth/use-auth";
 import { PasswordUpdateForm } from "../../components/form/password-update-form";
 
-export function ChangePasswordPage() {
+export function ProfilePasswordPage() {
   const router = useRouter();
   const { signOut } = useAuth();
 

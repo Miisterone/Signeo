@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useRouter, useSearch } from "@tanstack/react-router";
-import { useAuth } from "../../auth/auth-context";
+import { useAuth } from "../../auth/use-auth";
 import { AuthLayout } from "../../layouts/auth-layout";
 import { TextField } from "../../components/form/text-field";
 import { PasswordField } from "../../components/form/password-field";

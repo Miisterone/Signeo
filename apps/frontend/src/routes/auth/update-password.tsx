@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { UpdatePasswordPage } from '../../pages/update-password/update-password'
+import { RecoverPasswordPage } from '../../pages/recover-password/recover-password'
 
 export const Route = createFileRoute('/auth/update-password')({
-  component: UpdatePasswordPage,
+  component: RecoverPasswordPage,
 })

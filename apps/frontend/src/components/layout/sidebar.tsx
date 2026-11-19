@@ -5,7 +5,7 @@ import {
   LogOut,
   UserRound,
 } from "lucide-react";
-import { useAuth } from "../../auth/auth-context";
+import { useAuth } from "../../auth/use-auth";
 import { FormError } from "../ui/form-error";
 
 export function SideBar() {

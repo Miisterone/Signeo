@@ -1,9 +1,9 @@
 import { useRouter } from "@tanstack/react-router";
-import { useAuth } from "../../auth/auth-context";
+import { useAuth } from "../../auth/use-auth";
 import { AuthLayout } from "../../layouts/auth-layout";
 import { PasswordUpdateForm } from "../../components/form/password-update-form";
 
-export function UpdatePasswordPage() {
+export function RecoverPasswordPage() {
   const router = useRouter();
   const { signOut } = useAuth();
 
